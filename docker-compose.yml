@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: nakama
+      POSTGRES_PASSWORD: localdbpassword
+      POSTGRES_DB: nakama
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./local.yml:/data/local.yml
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+
+  nakama:
+    image: heroiclabs/nakama:3.17.0
+    entrypoint:
+      - "/bin/sh"
+      - "-ecx"
+      - >
+          /nakama/nakama
+          --database.address "nakama:localdbpassword@postgres:5432/nakama"
+          --runtime.path "/data/modules"
+          --socket.address "0.0.0.0"
+          --logger.level "DEBUG"
+    volumes:
+      - ./backend/modules:/data/modules
+    ports:
+      - "7350:7350"
+      - "7351:7351"
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  db_data:

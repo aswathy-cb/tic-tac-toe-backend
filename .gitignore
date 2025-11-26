@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+
+# Go build files
+*.exe
+*.dll
+*.so
+*.test
+
+# Nakama plugin output
+modules/
